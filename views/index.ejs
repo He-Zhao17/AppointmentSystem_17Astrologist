@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src = '/js/jquery.min.js'></script>
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <div class = 'post'>
+      <input type = 'text' class = 'title' placeholder = 'Please input the topic'>
+      <input type = 'text' class = 'content' placeholder = 'Please input the topic'>
+      <button class="ok">Submit</button>
+    </div>
+  <div class = 'test'></div>
+  </body>
+  <script>
+    function getList() {
+      $.get('/api/test', {}, function (data) {
+        console.log('----data', data)
+        if (data.code == 200) {
+          var html = '', list = data.result;
+          for (var i = 0; i < list.length; i++) {
+            html += '<div>这是第' + i + '条数据：标题为' + list[i].title + '，内容为' + list[i].content + '</div>'
+          }
+          $('.test').empty().append(html);
+        }
+      })
+    }
+    getList();
+    $('.ok').click(function() {
+      if (!$('.title').val()) {
+        alert('请填写标题');
+        return false;
+      }
+      if (!$('.content').val()) {
+        alert('请填写内容');
+        return false;
+      }
+      $.post('/api/addtest', {
+        title: $('.title').val(),
+        content: $('.content').val()
+      }, function (data) {
+        console.log('----addtest', data)
+        if (data.code == 200) {
+          alert('提交成功');
+          getList();
+        } else {
+          alert('提交失败');
+        }
+      })
+    })
+  </script>
+</html>
